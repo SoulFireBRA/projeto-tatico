@@ -1,26 +1,135 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #00ff41;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-pt-green: #00ff41;
+  --color-pt-green-dim: #0a3d1a;
+  --color-pt-amber: #ffb000;
+  --color-pt-red: #ff2040;
+  --color-pt-black: #000000;
+  --font-mono: var(--font-share-tech-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono), "Courier New", monospace;
+}
+
+/* Custom scrollbar, kept in the terminal palette */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-pt-green-dim);
+  border: 1px solid var(--color-pt-green);
+}
+
+/* Phosphor glow for headings / emphasis text */
+.text-glow {
+  text-shadow:
+    0 0 2px currentColor,
+    0 0 8px currentColor,
+    0 0 18px rgba(0, 255, 65, 0.35);
+}
+
+/* Fixed CRT scanline + vignette overlay, rendered once in the root layout */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 65, 0.05) 0px,
+    rgba(0, 255, 65, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  background-size: 100% 3px;
+  animation: scan-drift 8s linear infinite;
+}
+
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+@keyframes scan-drift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 120px;
+  }
+}
+
+/* Subtle CRT power flicker, apply to whole-screen wrappers */
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.86;
+  }
+  94% {
+    opacity: 1;
+  }
+}
+.crt-flicker {
+  animation: flicker 6s infinite;
+}
+
+/* Blinking terminal cursor, used by TypewriterText */
+@keyframes blink-cursor {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+.cursor-blink {
+  animation: blink-cursor 1s step-end infinite;
+}
+
+/* Status dot pulse */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 4px var(--color-pt-green);
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 1px var(--color-pt-green);
+  }
+}
+.status-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
 }
